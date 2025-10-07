@@ -34,5 +34,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/go-http-k8s-terraform:latest
-            ghcr.io/${{ github.repository_owner }}/go-http-k8s-terraform:${{ github.sha }}
+            ghcr.io/${{ toLower(github.repository_owner) }}/go-http-k8s-terraform:latest
+            ghcr.io/${{ toLower(github.repository_owner) }}/go-http-k8s-terraform:${{ github.sha }}
