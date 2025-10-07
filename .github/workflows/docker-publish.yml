@@ -28,11 +28,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Compute lowercase repository owner
+        id: owner
+        run: |
+          echo "lower=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/go-http-k8s-terraform:latest
-            ghcr.io/${{ toLower(github.repository_owner) }}/go-http-k8s-terraform:${{ github.sha }}
+            ghcr.io/${{ steps.owner.outputs.lower }}/go-http-k8s-terraform:latest
+            ghcr.io/${{ steps.owner.outputs.lower }}/go-http-k8s-terraform:${{ github.sha }}
