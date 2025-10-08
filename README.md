@@ -1,81 +1,99 @@
-# Go HTTP Server – Docker · CI/CD · Kubernetes · Terraform
+# Go HTTP Server Application
 
-A complete DevOps workflow for a simple Go HTTP server — from source code to container, CI/CD automation, Kubernetes deployment, and Infrastructure as Code with Terraform.
-
-## ⚙️ Overview
-
-This project demonstrates:
-- Building a minimal **Go web server** returning `"Hello, World!"`
-- **Dockerizing** the app for consistent deployment
-- Using **GitHub Actions** for automated build & release
-- **Deploying** the container into a Kubernetes cluster
-- Managing deployment declaratively via **Terraform**
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Application Components](#application-components)
+- [Setting up the Application](#setting-up-the-application)
+- [Using the Application](#using-the-application)
+- [Cleaning up Resources](#cleaning-up-resources)
 
 ---
 
-## 🧩 Tech Stack
+## Prerequisites
+Before you start, make sure you have the following installed locally:
 
-| Tool | Purpose |
-|------|----------|
-| **Go** | Simple HTTP server |
-| **Docker** | Containerization |
-| **GitHub Actions** | CI/CD automation |
-| **Kubernetes** | Container orchestration |
-| **Terraform** | Infrastructure as Code |
+- [Go](https://go.dev/doc/install) — to run the HTTP server locally  
+- [Docker](https://docs.docker.com/get-docker/) — for containerization  
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/) — to run a local Kubernetes cluster  
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) — to interact with Kubernetes  
+- [Terraform](https://developer.hashicorp.com/terraform/downloads) — to manage Kubernetes resources declaratively  
 
 ---
 
-## 🚀 Quick Start
+## Application Components
 
-### 1. Run locally
+### 1. Application Files
+Located inside the project root:
+
+- **main.go** — A simple Go HTTP server that listens on port `8080` and returns `"Hello, World!"`  
+- **Dockerfile** — Defines how to build the Docker image used by both the CI pipeline and Kubernetes
+
+### 2. CI/CD Pipeline
+Located inside the `.github/workflows` folder:
+
+- **docker-publish.yml** — A GitHub Actions workflow that builds and pushes the Docker image to GitHub Container Registry (GHCR) whenever code is pushed to the repository.
+
+### 3. Kubernetes Manifests
+Located inside the `k8s/` folder:
+
+- **deployment.yaml** — Defines the Kubernetes Deployment with two replicas of the Go HTTP server  
+- **service.yaml** — Exposes the Deployment internally using a ClusterIP service on port `8080`
+
+### 4. Terraform Configuration
+Located inside the `terraform/` folder:
+
+- **main.tf** — Defines Kubernetes resources as Terraform manifests  
+- **provider.tf** — Configures the Kubernetes provider using your kubeconfig context (e.g. `minikube`)  
+- **variables.tf** — Sets the container image variable for the deployment
+
+---
+
+## Setting up the Application
+
+### 1. Start Minikube Cluster
+The application runs inside a local Minikube cluster.  
+Start Minikube using:
+
 ```bash
-go run main.go
-# open http://localhost:8080 → Hello, World!
-2. Build & run with Docker
-bash
-Kód másolása
-docker build -t go-http-k8s-terraform .
-docker run -p 8080:8080 go-http-k8s-terraform
-3. Deploy to Kubernetes
+minikube start
+2. Deploy with Kubernetes YAML
+If you prefer to apply the Kubernetes manifests directly:
+
 bash
 Kód másolása
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
+Check the resources:
+
+bash
+Kód másolása
 kubectl get pods
 kubectl get svc
-4. Deploy with Terraform
+3. Deploy with Terraform
+Alternatively, deploy the same resources via Terraform:
+
 bash
 Kód másolása
 cd terraform
 terraform init
 terraform apply -auto-approve
-🧱 CI/CD
-GitHub Actions automatically:
+Terraform will read your Kubernetes context (e.g. Minikube) and create the Deployment and Service automatically.
 
-Builds the Docker image
+Using the Application
+Once deployed, forward the service port to access the app locally:
 
-Pushes it to GitHub Container Registry (GHCR)
-
-Tags it with both latest and the commit SHA
-
-Workflow file: .github/workflows/docker-publish.yml
-
-📦 Project Structure
-css
+bash
 Kód másolása
-.
-├── main.go
-├── Dockerfile
-├── .github/workflows/docker-publish.yml
-├── k8s/
-│   ├── deployment.yaml
-│   └── service.yaml
-└── terraform/
-    ├── main.tf
-    ├── provider.tf
-    └── variables.tf
-🧠 Summary
-✅ Go HTTP server responding on port 8080
-✅ Dockerized and pushed automatically via CI/CD
-✅ Deployed as Kubernetes Deployment + Service
-✅ Managed declaratively using Terraform
+kubectl port-forward deployment/go-http 8080:8080
+Then open http://localhost:8080
+You should see:
+
+Kód másolása
+Hello, World!
+Cleaning up Resources
+To delete all resources and stop the Minikube cluster:
+
+bash
+Kód másolása
+minikube delete
+This removes the Kubernetes cluster, all deployments, and services.
