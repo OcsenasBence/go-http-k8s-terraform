@@ -60,20 +60,20 @@ minikube start
 If you prefer to apply the Kubernetes manifests directly:
 
 bash
-Kód másolása
+
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
 Check the resources:
 
 bash
-Kód másolása
+
 kubectl get pods
 kubectl get svc
 3. Deploy with Terraform
 Alternatively, deploy the same resources via Terraform:
 
 bash
-Kód másolása
+
 cd terraform
 terraform init
 terraform apply -auto-approve
@@ -83,17 +83,17 @@ Using the Application
 Once deployed, forward the service port to access the app locally:
 
 bash
-Kód másolása
+
 kubectl port-forward deployment/go-http 8080:8080
 Then open http://localhost:8080
 You should see:
 
-Kód másolása
+
 Hello, World!
 Cleaning up Resources
 To delete all resources and stop the Minikube cluster:
 
 bash
-Kód másolása
+
 minikube delete
 This removes the Kubernetes cluster, all deployments, and services.
